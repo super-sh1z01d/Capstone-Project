@@ -1,0 +1,2 @@
+release_id,release_date,component,rollout_percent,description
+rel_2026_05_06_wizard_v2,2026-05-06,onboarding_wizard,100,New onboarding wizard with redesigned invite teammates step

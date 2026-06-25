@@ -1,0 +1,14 @@
+.DS_Store
+.env
+.venv/
+.serena/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+node_modules/
+frontend/dist/
+coverage/
