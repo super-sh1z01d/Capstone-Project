@@ -45,6 +45,8 @@ The investigation is organized as a specialist-agent workflow:
 
 This structure mirrors how a real product organization investigates incidents. Each agent has a narrow responsibility, and the final report combines their findings into one decision-ready artifact.
 
+The project also includes an explicit **agent skills** layer. Five skills are declared in code: metric drop quantification, segment driver detection, funnel step diagnosis, release correlation review, and claim guardrail review. Each skill states which tool it uses and what output contract it returns. This makes the agent behavior easier to inspect than a single opaque prompt.
+
 ## MCP Tool Layer
 
 The project includes an MCP analytics server so agent reasoning is separated from deterministic analytics tools. Agents do not need to read CSV files directly. They call tool-style functions that return structured results.
@@ -67,7 +69,9 @@ The app supports two runtime modes.
 
 **Demo Fallback Mode** is deterministic and requires no API key. This is the default mode so judges can run the project locally and reproduce the investigation without secrets or paid services.
 
-**Gemini / ADK Mode** is represented by an optional runtime adapter. When `GOOGLE_API_KEY` is configured and `AGENT_RUNTIME=adk`, the UI shows Gemini ADK mode while deterministic tools still own numerical calculations. This keeps the system safe: LLM reasoning can improve synthesis and explanation, but metric values come from testable functions.
+**Gemini API Mode** runs a real Gemini `generateContent` synthesis step when `GEMINI_API_KEY` or `GOOGLE_API_KEY` is configured and `AGENT_RUNTIME=adk`. The model receives the deterministic evidence cards, agent steps, skills manifest, and limitations, then produces a concise executive synthesis. Metric values still come from testable analytics functions, not from the model.
+
+The repository also includes an optional Google ADK entrypoint at `adk_app/agent.py`. When `google-adk` is installed, it exposes a `root_agent` with tools for describing the skill manifest and investigation scope. This keeps the ADK path visible while preserving the reproducible local demo.
 
 ## Demo Result
 
@@ -88,6 +92,7 @@ The project includes several safeguards:
 
 - No API keys or passwords are committed.
 - `.env.example` documents environment variables.
+- Gemini API use is environment-only and optional.
 - The demo dataset contains no personal data.
 - Uploaded CSV files are validated against a required schema.
 - Invalid datasets return data quality issues instead of producing misleading analysis.
@@ -108,8 +113,10 @@ The implementation includes deterministic tests for the core investigation behav
 - API behavior.
 - Markdown report generation.
 - Runtime mode selection.
+- Gemini API request construction and response parsing.
+- Agent skills and ADK entrypoint helpers.
 
-The current test suite has **17 passing tests**. The frontend also builds successfully, and `npm audit --audit-level=moderate` reports **0 vulnerabilities**.
+The current test suite covers these behaviors with automated tests. The frontend also builds successfully, and `npm audit --audit-level=moderate` reports **0 vulnerabilities**.
 
 ## Deployability And Reproducibility
 
@@ -142,7 +149,7 @@ I also learned that agent design is clearer when it follows the workflow of real
 
 ## Limitations And Future Work
 
-The current version uses a synthetic dataset and a deterministic fallback report. That makes the demo reproducible, but it is not production telemetry. The ADK integration is intentionally conservative: it selects runtime mode and preserves deterministic calculations, but a future version could add fuller ADK orchestration and richer LLM-generated synthesis.
+The current version uses a synthetic dataset. That makes the demo reproducible, but it is not production telemetry. Gemini synthesis requires an API key, and the ADK entrypoint is intentionally conservative: it exposes the agent and its scope, but a future version could add fuller ADK orchestration across live analytics connectors.
 
 Future improvements include:
 
@@ -156,4 +163,3 @@ Future improvements include:
 ## Conclusion
 
 Activation Drop Investigator shows how agents can help product teams move from “the metric is down” to “here is the most likely issue, here is the evidence, and here is what to do next.” The project combines multi-agent decomposition, MCP tool interoperability, security guardrails, deterministic evaluation, and a practical dashboard into one business-focused investigation workflow.
-

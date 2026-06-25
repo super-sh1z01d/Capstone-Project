@@ -8,8 +8,10 @@ The demo investigates a B2B productivity SaaS onboarding drop. A new onboarding 
 
 ## Course Concepts Demonstrated
 
-- ADK-style multi-agent investigation architecture with specialist agents.
+- ADK-style multi-agent investigation architecture with specialist agents and an optional ADK entrypoint.
+- Explicit agent skills for metric quantification, segment analysis, funnel diagnosis, release correlation, and claim guardrails.
 - MCP analytics server exposing metric, segment, funnel, release, and data quality tools.
+- Gemini API synthesis mode for executive narrative generation from deterministic tool evidence.
 - Security guardrails: no secrets in repo, environment-only API key, local demo data, CSV validation.
 - Evaluation and deployability: deterministic fallback mode, tests, reproducible demo data, clear setup.
 
@@ -19,9 +21,11 @@ The demo investigates a B2B productivity SaaS onboarding drop. A new onboarding 
 React Dashboard
   -> FastAPI backend
     -> Investigation orchestrator
+      -> Agent skills manifest
       -> Analytics functions
       -> MCP tool payloads
-      -> Optional Gemini/ADK runtime adapter
+      -> Gemini API synthesis adapter
+      -> Optional ADK root_agent entrypoint
     -> Markdown report export
 ```
 
@@ -63,15 +67,38 @@ Open `http://localhost:5173`.
 
 Default mode is deterministic Demo Fallback. It requires no API key and produces a full investigation report from the built-in dataset.
 
-To select Gemini/ADK mode:
+To select Gemini API synthesis mode:
 
 ```bash
 cp .env.example .env
-export GOOGLE_API_KEY="your-key"
+export GEMINI_API_KEY="your-key"
 export AGENT_RUNTIME=adk
 ```
 
-Numerical calculations remain deterministic even when ADK mode is active.
+`GOOGLE_API_KEY` is also supported for compatibility. Numerical calculations remain deterministic even when Gemini mode is active; the model only synthesizes narrative from tool evidence.
+
+## Agent Skills
+
+The investigation exposes five explicit skills in `backend/agent_skills.py`:
+
+- Metric Drop Quantification
+- Segment Driver Detection
+- Funnel Step Diagnosis
+- Release Correlation Review
+- Claim Guardrail Review
+
+Each skill declares the tools it uses and its output contract. The dashboard and exported Markdown report include the skill manifest.
+
+## ADK Entrypoint
+
+The project includes `adk_app/agent.py`, which exposes `root_agent` when the optional ADK dependency is installed:
+
+```bash
+pip install -e ".[adk,dev]"
+adk run adk_app
+```
+
+The ADK agent is intentionally conservative: it describes skills and investigation scope, while deterministic MCP/analytics tools remain responsible for numbers.
 
 ## MCP Server
 
@@ -94,12 +121,13 @@ Exposed tools include:
 ## Demo Script
 
 1. Open the dashboard.
-2. Confirm the mode badge says Demo Fallback or Gemini ADK.
+2. Confirm the mode badge says Demo Fallback or Gemini API.
 3. Click Run Investigation.
 4. Review activation drop summary.
 5. Review the SMB segment evidence.
 6. Review the invite-step funnel loss.
-7. Export the Markdown report.
+7. Review the agent skills and optional Gemini synthesis.
+8. Export the Markdown report.
 
 ## Sample CSV Schema
 
@@ -125,4 +153,3 @@ Recommended assets for the Kaggle Writeup:
 - Dashboard screenshot.
 - Architecture diagram based on the architecture block above.
 - Exported Markdown report from the demo run.
-

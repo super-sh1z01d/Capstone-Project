@@ -1,4 +1,4 @@
-from backend.adk_runtime import resolve_runtime_mode
+from backend.adk_runtime import resolve_runtime_mode, run_investigation
 from backend.data_loader import load_demo_dataset
 from backend.investigator import run_fallback_investigation
 from backend.mcp_server import list_datasets_payload, run_metric_query_payload
@@ -40,3 +40,26 @@ def test_resolve_runtime_mode_uses_adk_when_key_present(monkeypatch):
     monkeypatch.setenv("AGENT_RUNTIME", "auto")
 
     assert resolve_runtime_mode() == "gemini_adk"
+
+
+def test_gemini_runtime_adds_real_synthesis_when_client_succeeds(monkeypatch):
+    class FakeGeminiClient:
+        def generate_text(self, prompt: str) -> str:
+            assert "Activation moved from" in prompt
+            return "Gemini synthesis: SMB invite-step regression is the lead hypothesis."
+
+    monkeypatch.setenv("GEMINI_API_KEY", "fake-key-for-runtime-selection")
+    monkeypatch.setenv("AGENT_RUNTIME", "adk")
+
+    report = run_investigation(
+        InvestigationRequest(),
+        load_demo_dataset(),
+        gemini_client=FakeGeminiClient(),
+    )
+
+    assert report.runtime_mode == "gemini_adk"
+    assert (
+        report.ai_synthesis
+        == "Gemini synthesis: SMB invite-step regression is the lead hypothesis."
+    )
+    assert "## Gemini Synthesis" in report.markdown_report

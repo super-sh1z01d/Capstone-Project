@@ -77,6 +77,14 @@ class AgentStep(BaseModel):
     finding: str
 
 
+class AgentSkill(BaseModel):
+    skill_id: str
+    name: str
+    description: str
+    tool_names: list[str]
+    output_contract: str
+
+
 class InvestigationReport(BaseModel):
     runtime_mode: Literal["demo_fallback", "gemini_adk"]
     metric_summary: MetricSummary
@@ -85,7 +93,9 @@ class InvestigationReport(BaseModel):
     release_findings: list[ReleaseFinding]
     evidence_cards: list[EvidenceCard]
     agent_steps: list[AgentStep]
+    skills_used: list[AgentSkill]
     executive_summary: str
+    ai_synthesis: str | None = None
     ranked_hypotheses: list[str]
     recommended_actions: list[str]
     limitations: list[str]

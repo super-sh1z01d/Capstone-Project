@@ -115,7 +115,7 @@ export function App() {
         <div className="top-actions">
           <span className="runtime">
             <ShieldCheck size={16} />
-            {report?.runtime_mode === "gemini_adk" ? "Gemini ADK" : "Demo Fallback"}
+            {report?.runtime_mode === "gemini_adk" ? "Gemini API" : "Demo Fallback"}
           </span>
           <button className="icon-button" onClick={exportMarkdown} disabled={!report} title="Export Markdown">
             <Download size={18} />
@@ -173,7 +173,7 @@ export function App() {
 
           <div className="schema-note">
             <Sparkles size={16} />
-            <span>Agent stack: Metric Analyst, Segment Detective, Funnel Analyst, Release Correlator, Guardrails.</span>
+            <span>Agent stack: specialist agents, MCP analytics tools, explicit skills, and guardrails.</span>
           </div>
         </aside>
 
@@ -267,6 +267,35 @@ export function App() {
                   </ul>
                 </div>
               </section>
+
+              {(report.ai_synthesis || report.skills_used.length > 0) && (
+                <section className="capability-grid">
+                  {report.ai_synthesis && (
+                    <div className="panel synthesis-panel">
+                      <div className="panel-heading">
+                        <h2>Gemini Synthesis</h2>
+                        <span>AI API output</span>
+                      </div>
+                      <p>{report.ai_synthesis}</p>
+                    </div>
+                  )}
+                  <div className="panel skills-panel">
+                    <div className="panel-heading">
+                      <h2>Agent Skills</h2>
+                      <span>{report.skills_used.length} skills</span>
+                    </div>
+                    <div className="skill-list">
+                      {report.skills_used.map((skill) => (
+                        <article key={skill.skill_id}>
+                          <strong>{skill.name}</strong>
+                          <p>{skill.description}</p>
+                          <span>{skill.tool_names.join(", ")}</span>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              )}
 
               <section className="evidence-grid">
                 {report.evidence_cards.map((card) => (

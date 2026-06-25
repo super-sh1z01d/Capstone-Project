@@ -48,6 +48,14 @@ export interface AgentStep {
   finding: string;
 }
 
+export interface AgentSkill {
+  skill_id: string;
+  name: string;
+  description: string;
+  tool_names: string[];
+  output_contract: string;
+}
+
 export interface InvestigationReport {
   runtime_mode: RuntimeMode;
   metric_summary: MetricSummary;
@@ -56,7 +64,9 @@ export interface InvestigationReport {
   release_findings: ReleaseFinding[];
   evidence_cards: EvidenceCard[];
   agent_steps: AgentStep[];
+  skills_used: AgentSkill[];
   executive_summary: string;
+  ai_synthesis: string | null;
   ranked_hypotheses: string[];
   recommended_actions: string[];
   limitations: string[];

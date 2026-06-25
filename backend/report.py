@@ -38,6 +38,20 @@ def render_markdown_report(report: InvestigationReport) -> str:
                 "",
             ]
         )
+    if report.ai_synthesis:
+        lines.extend(["## Gemini Synthesis", "", report.ai_synthesis, ""])
+    lines.extend(["## Agent Skills", ""])
+    for skill in report.skills_used:
+        lines.extend(
+            [
+                f"### {skill.name}",
+                "",
+                f"- Skill ID: {skill.skill_id}",
+                f"- Tools: {', '.join(skill.tool_names)}",
+                f"- Output contract: {skill.output_contract}",
+                "",
+            ]
+        )
     lines.extend(["## Ranked Hypotheses", ""])
     lines.extend(
         [f"{index}. {item}" for index, item in enumerate(report.ranked_hypotheses, start=1)]

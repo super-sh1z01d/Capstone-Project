@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from backend.agent_skills import skill_manifest
 from backend.analytics import (
     analyze_funnel,
     calculate_metric_summary,
@@ -118,6 +119,7 @@ def run_fallback_investigation(
         release_findings=releases,
         evidence_cards=evidence_cards,
         agent_steps=agent_steps,
+        skills_used=skill_manifest(),
         executive_summary=(
             "Activation rate dropped in the current period. The strongest evidence points to an "
             "onboarding regression concentrated among SMB users, with the largest funnel loss "

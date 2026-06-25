@@ -245,7 +245,8 @@ input {
 }
 
 .chart-grid,
-.middle-grid {
+.middle-grid,
+.capability-grid {
   display: grid;
   gap: 18px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -306,6 +307,51 @@ input {
   margin-bottom: 0;
 }
 
+.capability-grid {
+  align-items: start;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+}
+
+.synthesis-panel p {
+  color: #334155;
+  line-height: 1.55;
+  margin-bottom: 0;
+}
+
+.skill-list {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.skill-list article {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.skill-list strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.skill-list p {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.skill-list span {
+  color: #0f766e;
+  display: block;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
 .evidence-grid {
   display: grid;
   gap: 14px;
@@ -349,9 +395,11 @@ li {
   .layout,
   .chart-grid,
   .middle-grid,
+  .capability-grid,
   .evidence-grid,
   .metric-strip,
-  .report-columns {
+  .report-columns,
+  .skill-list {
     grid-template-columns: 1fr;
   }
 
